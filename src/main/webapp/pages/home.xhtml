@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <ui:define name="west">
+        <h:form id="form">
+            <p:commandButton value="#{general['label.upload']}"
+                             icon="fa fa-plus"
+                             styleClass="btn btn-primary"
+                             onclick="PF('uploadImages').show()"
+                             style="width: 100%"/>
+            <p:repeat value="#{imageBean.listaImagenes}"
+                      var="image"
+                      varStatus="status"
+                      id="manuelSwitcherImages"
+                      >
+                <p:panelGrid id="panelPreviousImage" 
+                             columns="1" styleClass="ui-panelgrid-blank">
+                    <p:column>
+                        <p:commandLink actionListener="#{imageBean.preConfigImageComplete(status.index)}"
+                                       update="panelImageComplete:container">
+                            <o:graphicImage id="imagen"
+                                            value="#{imageBean.imagenPrevious(status.index)}"
+                                            width="275"
+                                            height="#{image.height gt image.width ? '350' : '200'}"
+                                            lastModified="#{now}"
+                                            />
+                        </p:commandLink>
+                        <p:tooltip id="toolTipFade" for="imagen" 
+                                   >
+                            <h:panelGrid columns="1">
+                                <h:outputText value="Nombre: #{image.fileName}" 
+                                              id="labelName"/>
+
+                                <h:outputText value="Tamaño: #{image.size} KB" 
+                                              id="labelSize"/>
+
+                                <h:outputText value="Tipo: #{image.contentType}" 
+                                              id="labelType"/>
+
+                                <h:outputText value="Dimensión: #{image.width} x #{image.height}" 
+                                              id="labelDimen"/>
+                            </h:panelGrid>
+
+                        </p:tooltip>
+                    </p:column>
+                    <p:column>
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <p:commandButton icon="fa fa-edit" 
+                                                 styleClass="btn btn-primary"
+                                                 value="Editar"
+                                                 style="width: 100%;"
+                                                 update="formSave"
+                                                 actionListener="#{imageBean.preEdit(status.index, image.datosBasicos)}"
+                                                 oncomplete="PF('imageDetail').show()"
+                                                 title="Editar contenido de la imagen"/>
+                            </div>
+                        </div>
+                    </p:column>
+                </p:panelGrid>
+            </p:repeat>
+        </h:form>
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="panelImageComplete">
+            <p:growl id="growl" showDetail="true"
+                     />
+            <button type="button" onclick="PF('layoutWdgt').toggle('west')"
+                    class="btn btn-primary btn-circle btn-lg">
+                <i class="fa fa-expand"/>
+            </button>
+            <h:panelGrid  id="container" class="#{imageBean.datosBasicos eq null ? '' : 'container'}" 
+                          style="width: #{imageBean.width}px;">
+                <p:commandLink action="#{imageBean.downloadImage()}" update="growl">
+                    <o:graphicImage id="imagenComplete"
+                                    lastModified="#{now}"
+                                    width="#{imageBean.width eq null ? '512' : imageBean.width}"
+                                    height="#{imageBean.height eq null ? '512' : imageBean.height}"
+                                    value="#{imageBean.imagenComplete}"
+                                    >
+                        <h:panelGrid rendered="#{imageBean.index ne null}"
+                                     class="content font-container" 
+                                     style="width: #{imageBean.width}px;border-style: none;">
+                            <c:set var="isLatitudNull" value="#{imageBean.datosBasicos.latitude eq null}"/>
+                            <c:set var="isLongitudNull" value="#{imageBean.datosBasicos.longitude eq null}"/>
+                            <c:set var="isAltitudNull" value="#{imageBean.datosBasicos.altitude eq null}"/>
+                            <div class="ui-g">
+                                <div class="ui-g-12">#{imageBean.datosBasicos.addres}</div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{isLatitudNull ? '' : 'Latitude'}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3 font-letter-small">#{imageBean.datosBasicos.latitude}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{isLongitudNull ? '' : 'Longitude'}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3 font-letter-small">#{imageBean.datosBasicos.longitude}</div>
+                            </div>
+                            <div class="ui-g">
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{imageBean.convertDateLocalString()}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{imageBean.convertDateInternationalString()}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{imageBean.convertDateToString()}</div>
+                                <div class="ui-g-12 ui-md-6 ui-lg-3">#{isAltitudNull ? '' : 'ALTITUDE '} 
+                                    #{imageBean.datosBasicos.altitude} #{isAltitudNull ? '' : ' METER'}</div>
+                            </div>
+                        </h:panelGrid>
+                    </o:graphicImage>
+                </p:commandLink>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>

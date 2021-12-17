@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>#{general['name.app']}</title>
+        <h:outputScript name="html2canvas.min.js" library="js"/>
+        <h:outputScript name="general.js" library="js"/>
+        <h:outputStylesheet library="css" name="general.css"/>
+    </h:head>
+    <p:layout id="layaoutPrincipal" fullPage="true" widgetVar="layoutWdgt">
+        <p:layoutUnit id="layaoutWest"
+                      closable="false"
+                      collapseSize="0"
+                      collapsible="true"
+                      class="layaoutWest"
+                      effect="drop"
+                      collapsed="false"
+                      position="west" size="300">
+            <ui:insert name="west"/>
+        </p:layoutUnit>
+        <p:layoutUnit id="layaoutCenter"
+                      class="layaoutCenter"
+                      position="center">
+            <ui:insert name="content"/>
+        </p:layoutUnit>
+    </p:layout>
+    <ui:include src="/pages/uploadImagesPopUp.xhtml"/>
+</html>

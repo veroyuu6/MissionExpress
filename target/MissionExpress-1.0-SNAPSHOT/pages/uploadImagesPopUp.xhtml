@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog widgetVar="uploadImages"
+              modal="true"
+              width="840"
+              closeOnEscape="true"
+              dynamic="true"
+              minWidth="840"
+              height="300" minHeight="300"
+              resizable="false"
+              responsive="true"
+              position="center"
+              showEffect="explode">
+        <h:form
+            enctype="multipart/form-data">
+            <p:fileUpload id="image"
+                          multiple="true"
+                          update=":form"
+                          invalidFileMessage="#{general['message.file.ext']}"
+                          listener="#{imageBean.uploadImage}"
+                          cancelLabel="#{general['label.file.cancel']}"
+                          label="#{general['label.file.upload']}"
+                          uploadLabel="#{general['label.file.accept']}"
+                          allowTypes="/(\.|\/)(jpe?g|png|jpg)$/"
+                          sizeLimit="#{general['file.limit.size']}"
+                          invalidSizeMessage="#{general['message.file.size']}"
+                          mode="advanced">
+            </p:fileUpload>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog widgetVar="imageDetail"
+              modal="true"
+              closeOnEscape="true"
+              resizable="false"
+              width="40%"
+              responsive="true"
+              position="center"
+              showEffect="explode">
+        <h:form id="formSave">
+            <p:growl id="growl" showDetail="true" globalOnly="true"
+                     rendered="#{!facesContext.validationFailed}"/>
+            <p:panelGrid id="panelDetail">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una dirección" for="labelAddres"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:inputText value="#{imageBean.datosBasicos.addres}"
+                                         required="true"
+                                         maxlength="60"
+                                         size="60" label="Dirección"
+                                         id="labelAddres"/>
+                            <p:outputLabel for="@previous" value="Dirección*"/>
+                        </span>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una latitud" for="labelLatitude"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:inputText value="#{imageBean.datosBasicos.latitude}" 
+                                         required="true"
+                                         maxlength="20"
+                                         size="20"
+                                         id="labelLatitude"/>
+                            <p:outputLabel for="@previous" value="Latitud*"/>
+                        </span>
+                    </div>
+                    <div class="ui-g-12">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una longitud" for="labelLongitude"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:inputText value="#{imageBean.datosBasicos.longitude}"
+                                         size="20"
+                                         maxlength="20"
+                                         required="true"
+                                         id="labelLongitude"/>
+                            <p:outputLabel for="@previous" value="Longitud*"/>
+                        </span>
+                    </div>
+                </div>
+                <div class="ui-g">
+                    <div class="ui-g-3">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una hora local" for="labelLocal"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:datePicker id="labelLocal" 
+                                          required="true"
+                                          size="8"
+                                          maxlength="8"
+                                          value="#{imageBean.datosBasicos.hourLocal}" 
+                                          timeOnly="true" 
+                                          showSeconds="true"
+                                          pattern="HH:mm:ss"/>
+                            <p:outputLabel for="@previous" value="Hora local"/> 
+                        </span>
+                    </div>
+                    <div class="ui-g-3">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una hora internacional" for="labelInternational"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:datePicker id="labelInternational" 
+                                          required="true"
+                                          size="8"
+                                          maxlength="8"
+                                          value="#{imageBean.datosBasicos.hourInternational}" 
+                                          timeOnly="true" 
+                                          showSeconds="true"
+                                          pattern="HH:mm:ss"/>
+                            <p:outputLabel for="@previous" value="Hora gmt*"/> 
+                        </span>
+                    </div>
+                    <div class="ui-g-3">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una fecha" for="labelFecha"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:datePicker id="labelFecha"
+                                          pattern="MM.dd.yyyy"
+                                          required="true"
+                                          size="8"
+                                          maxlength="8"
+                                          value="#{imageBean.datosBasicos.date}"/>
+                            <p:outputLabel for="@previous" value="Fecha*"/> 
+                        </span>
+                    </div>
+                    <div class="ui-g-3">
+                        <span class="ui-float-label">
+                            <p:tooltip value="Se necesita una altitud" for="labelAltitude"
+                                       rendered="#{facesContext.validationFailed}"/>
+                            <p:inputText value="#{imageBean.datosBasicos.altitude}"
+                                         size="4"
+                                         maxlength="4"
+                                         required="true"
+                                         id="labelAltitude"/>
+                            <p:outputLabel for="@previous" value="Altitud*"/> 
+                        </span>
+                    </div>
+                </div>
+            </p:panelGrid>
+            <center>
+                <p:panelGrid columns="2" styleClass="ui-panelgrid-blank" >
+                    <p:commandButton value="Guardar"
+                                     update="@form, panelImageComplete:container"
+                                     action="#{imageBean.save()}"
+                                     icon="fa fa-save"
+                                     styleClass="btn btn-primary"/>
+                    <p:commandButton value="Cancelar" 
+                                     icon="fa fa-window-close"
+                                     immediate="true"
+                                     onclick="PF('imageDetail').hide()"
+                                     styleClass="btn btn-danger"/>
+                </p:panelGrid>
+            </center>
+        </h:form>
+    </p:dialog>
+</ui:composition>
